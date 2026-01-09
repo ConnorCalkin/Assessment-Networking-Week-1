@@ -10,14 +10,28 @@ CACHE_FILE = "./postcode_cache.json"
 
 def load_cache() -> dict:
     """Loads the cache from a file and converts it from JSON to a dictionary."""
-    # This function is used in Task 3, you can ignore it for now.
-    ...
+    try:
+        with open(CACHE_FILE, "r") as f:
+            data = json.load(f)
+        return data
+    except FileNotFoundError:
+        print("AAA")
+        return {}
 
 
 def save_cache(cache: dict):
     """Saves the cache to a file as JSON"""
-    # This function is used in Task 3, you can ignore it for now.
-    ...
+    json_str = json.dumps(cache, indent=4)
+    with open(CACHE_FILE, "w") as f:
+        f.write(json_str)
+
+
+def add_cache_valid(postcode: str, valid: bool) -> None:
+    cache = load_cache()
+    if postcode not in cache:
+        cache[postcode] = {}
+    cache[postcode]["valid"] = valid
+    save_cache(cache)
 
 
 def get_validate_url(postcode: str):
@@ -40,6 +54,22 @@ def get_details_url():
     return "https://api.postcodes.io/postcodes"
 
 
+def validate_postcode_from_API(postcode: str) -> bool:
+    response = req.get(get_validate_url(postcode), timeout=10)
+    if response.status_code != 200:
+        raise req.RequestException("Unable to access API.")
+
+    return response.json()["result"]
+
+
+def validate_postcode_from_cache(postcode: str) -> bool:
+    cache = load_cache()
+    if postcode in cache and "valid" in cache[postcode]:
+        return cache[postcode]["valid"]
+    else:
+        raise RuntimeError("No value in cache")
+
+
 def validate_postcode(postcode: str) -> bool:
     '''
     returns whether a postcode is a valid postcode or not
@@ -47,11 +77,12 @@ def validate_postcode(postcode: str) -> bool:
     if isinstance(postcode, str) is False:
         raise TypeError("Function expects a string.")
 
-    response = req.get(get_validate_url(postcode), timeout=10)
-    if response.status_code != 200:
-        raise req.RequestException("Unable to access API.")
-
-    return response.json()["result"]
+    try:
+        return validate_postcode_from_cache(postcode)
+    except RuntimeError:
+        valid = validate_postcode_from_API(postcode)
+        add_cache_valid(postcode, valid)
+        return valid
 
 
 def get_postcode_for_location(lat: float, long: float) -> str:
