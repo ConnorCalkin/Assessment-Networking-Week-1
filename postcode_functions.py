@@ -1,6 +1,5 @@
 """Functions that interact with the Postcode API."""
 
-import os
 import json
 import requests as req
 
@@ -11,7 +10,7 @@ CACHE_FILE = "./postcode_cache.json"
 def load_cache() -> dict:
     """Loads the cache from a file and converts it from JSON to a dictionary."""
     try:
-        with open(CACHE_FILE, "r") as f:
+        with open(CACHE_FILE, "r", encoding="utf-8") as f:
             data = json.load(f)
         return data
     except FileNotFoundError:
@@ -22,11 +21,12 @@ def load_cache() -> dict:
 def save_cache(cache: dict):
     """Saves the cache to a file as JSON"""
     json_str = json.dumps(cache, indent=4)
-    with open(CACHE_FILE, "w") as f:
+    with open(CACHE_FILE, "w", encoding="utf-8") as f:
         f.write(json_str)
 
 
 def add_cache_valid(postcode: str, valid: bool) -> None:
+    '''adds the valid value to the postcode in the cache'''
     cache = load_cache()
     if postcode not in cache:
         cache[postcode] = {}
@@ -35,6 +35,7 @@ def add_cache_valid(postcode: str, valid: bool) -> None:
 
 
 def add_cache_completions(postcode: str, completions: list[str]) -> None:
+    '''adds the completions to the postcode in the cache'''
     cache = load_cache()
     if postcode not in cache:
         cache[postcode] = {}
@@ -62,7 +63,8 @@ def get_details_url():
     return "https://api.postcodes.io/postcodes"
 
 
-def validate_postcode_from_API(postcode: str) -> bool:
+def validate_postcode_from_api(postcode: str) -> bool:
+    '''gets whether the postcode is valid by accessing the API'''
     response = req.get(get_validate_url(postcode), timeout=10)
     if response.status_code != 200:
         raise req.RequestException("Unable to access API.")
@@ -71,11 +73,15 @@ def validate_postcode_from_API(postcode: str) -> bool:
 
 
 def validate_postcode_from_cache(postcode: str) -> bool:
+    '''
+    gets whether the postcode is valid from the cache
+    if it can't find it, it will return a RunTimeError
+    '''
     cache = load_cache()
-    if postcode in cache and "valid" in cache[postcode]:
+    try:
         return cache[postcode]["valid"]
-    else:
-        raise RuntimeError(f"No value for postcode {postcode} in cache")
+    except KeyError as e:
+        raise RuntimeError(f"No value for postcode {postcode} in cache") from e
 
 
 def validate_postcode(postcode: str) -> bool:
@@ -88,7 +94,7 @@ def validate_postcode(postcode: str) -> bool:
     try:
         return validate_postcode_from_cache(postcode)
     except RuntimeError:
-        valid = validate_postcode_from_API(postcode)
+        valid = validate_postcode_from_api(postcode)
         add_cache_valid(postcode, valid)
         return valid
 
@@ -113,7 +119,8 @@ def get_postcode_for_location(lat: float, long: float) -> str:
     return result[0]["postcode"]
 
 
-def get_postcode_completions_from_API(postcode_start: str) -> list[str]:
+def get_postcode_completions_from_api(postcode_start: str) -> list[str]:
+    '''Gets the completions of the postcode from the API'''
     response = req.get(get_collections_url(postcode_start), timeout=10)
     if response.status_code != 200:
         raise req.RequestException("Unable to access API.")
@@ -126,17 +133,18 @@ def get_postcode_completions_from_API(postcode_start: str) -> list[str]:
 
 
 def get_postcode_completions_from_cache(postcode_start: str) -> list[str]:
+    '''gets the completions of the postcodes from the cache'''
     cache = load_cache()
     try:
         return cache[postcode_start]["completions"]
-    except KeyError:
+    except KeyError as e:
         raise RuntimeError(
-            f"No collections value for {postcode_start} in cache")
+            f"No collections value for {postcode_start} in cache") from e
 
 
 def get_postcode_completions(postcode_start: str) -> list[str]:
     '''
-    gets the postcodes that start with a certain value from the API
+    gets the postcodes that start with a certain value
     '''
     if isinstance(postcode_start, str) is False:
         raise TypeError("Function expects a string.")
@@ -144,7 +152,7 @@ def get_postcode_completions(postcode_start: str) -> list[str]:
     try:
         return get_postcode_completions_from_cache(postcode_start)
     except RuntimeError:
-        completions = get_postcode_completions_from_API(postcode_start)
+        completions = get_postcode_completions_from_api(postcode_start)
         add_cache_completions(postcode_start, completions)
         return completions
 
