@@ -9,12 +9,9 @@ test_postcode_cli.py .............F..................                    [ 49%]
 test_postcode_functions.py ..........................................FFF [ 98%]
 F                                                                        [100%]
 
-======================== 18 failed, 73 passed in 5.61s =========================
+======================== 18 failed, 73 passed in 5.55s =========================
 ************* Module postcode_cli
-postcode_cli.py:7:0: C0116: Missing function or method docstring (missing-function-docstring)
-postcode_cli.py:15:0: C0116: Missing function or method docstring (missing-function-docstring)
-postcode_cli.py:15:29: W0621: Redefining name 'postcode' from outer scope (line 34) (redefined-outer-name)
-postcode_cli.py:22:0: C0116: Missing function or method docstring (missing-function-docstring)
+postcode_cli.py:19:29: W0621: Redefining name 'postcode' from outer scope (line 40) (redefined-outer-name)
 ************* Module postcode_functions
 postcode_functions.py:14:4: W2301: Unnecessary ellipsis constant (unnecessary-ellipsis)
 postcode_functions.py:20:4: W2301: Unnecessary ellipsis constant (unnecessary-ellipsis)
@@ -24,5 +21,5 @@ postcode_functions.py:3:0: W0611: Unused import os (unused-import)
 postcode_functions.py:4:0: W0611: Unused import json (unused-import)
 
 ------------------------------------------------------------------
-Your code has been rated at 8.33/10 (previous run: 8.33/10, +0.00)
+Your code has been rated at 8.69/10 (previous run: 8.69/10, +0.00)
 
