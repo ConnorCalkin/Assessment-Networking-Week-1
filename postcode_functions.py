@@ -34,6 +34,14 @@ def add_cache_valid(postcode: str, valid: bool) -> None:
     save_cache(cache)
 
 
+def add_cache_completions(postcode: str, completions: list[str]) -> None:
+    cache = load_cache()
+    if postcode not in cache:
+        cache[postcode] = {}
+    cache[postcode]["completions"] = completions
+    save_cache(cache)
+
+
 def get_validate_url(postcode: str):
     '''gives the url for the validate endpoint'''
     return f"https://api.postcodes.io/postcodes/{postcode}/validate"
@@ -67,7 +75,7 @@ def validate_postcode_from_cache(postcode: str) -> bool:
     if postcode in cache and "valid" in cache[postcode]:
         return cache[postcode]["valid"]
     else:
-        raise RuntimeError("No value in cache")
+        raise RuntimeError(f"No value for postcode {postcode} in cache")
 
 
 def validate_postcode(postcode: str) -> bool:
@@ -105,13 +113,7 @@ def get_postcode_for_location(lat: float, long: float) -> str:
     return result[0]["postcode"]
 
 
-def get_postcode_completions(postcode_start: str) -> list[str]:
-    '''
-    gets the postcodes that start with a certain value from the API
-    '''
-    if isinstance(postcode_start, str) is False:
-        raise TypeError("Function expects a string.")
-
+def get_postcode_completions_from_API(postcode_start: str) -> list[str]:
     response = req.get(get_collections_url(postcode_start), timeout=10)
     if response.status_code != 200:
         raise req.RequestException("Unable to access API.")
@@ -121,6 +123,30 @@ def get_postcode_completions(postcode_start: str) -> list[str]:
         raise ValueError("No relevant postcode found.")
 
     return response_json["result"]
+
+
+def get_postcode_completions_from_cache(postcode_start: str) -> list[str]:
+    cache = load_cache()
+    try:
+        return cache[postcode_start]["completions"]
+    except KeyError:
+        raise RuntimeError(
+            f"No collections value for {postcode_start} in cache")
+
+
+def get_postcode_completions(postcode_start: str) -> list[str]:
+    '''
+    gets the postcodes that start with a certain value from the API
+    '''
+    if isinstance(postcode_start, str) is False:
+        raise TypeError("Function expects a string.")
+
+    try:
+        return get_postcode_completions_from_cache(postcode_start)
+    except RuntimeError:
+        completions = get_postcode_completions_from_API(postcode_start)
+        add_cache_completions(postcode_start, completions)
+        return completions
 
 
 def get_postcodes_details(postcodes: list[str]) -> dict:
