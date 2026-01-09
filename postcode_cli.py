@@ -6,9 +6,9 @@ from postcode_functions import validate_postcode, get_postcode_completions
 
 def get_args():
     parser = ArgumentParser()
-    parser.add_argument('postcode')
     parser.add_argument(
         '--mode', "-m", choices=["validate", "complete"], required=True)
+    parser.add_argument('postcode')
     return parser.parse_args()
 
 
@@ -22,7 +22,8 @@ def output_validate_postcode(postcode: str) -> None:
 def output_completed_postcodes(postcode_start: str) -> None:
     try:
         completions = get_postcode_completions(postcode_start)
-        for completion in completions:
+        first_5 = completions[:5]
+        for completion in first_5:
             print(completion)
     except ValueError:
         print(f'No matches for {postcode_start}.')
