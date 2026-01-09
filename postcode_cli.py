@@ -5,14 +5,19 @@ from postcode_functions import validate_postcode, get_postcode_completions
 
 
 def get_args():
+    '''gets and parses the command line arguments'''
     parser = ArgumentParser()
     parser.add_argument(
-        '--mode', "-m", choices=["validate", "complete"], required=True)
-    parser.add_argument('postcode')
+        '--mode', "-m", choices=["validate", "complete"], required=True,
+        help="Required string argument (validate / complete) that allows you "
+        "to choose what to do")
+    parser.add_argument(
+        'postcode', help="Required string argument for postcode to be checked")
     return parser.parse_args()
 
 
 def output_validate_postcode(postcode: str) -> None:
+    '''outputs whether the code is valid according to the API'''
     if validate_postcode(postcode) is True:
         print(f'{postcode} is a valid postcode.')
     else:
@@ -20,6 +25,7 @@ def output_validate_postcode(postcode: str) -> None:
 
 
 def output_completed_postcodes(postcode_start: str) -> None:
+    '''outputs the completed codes obtained from the API'''
     try:
         completions = get_postcode_completions(postcode_start)
         first_5 = completions[:5]
