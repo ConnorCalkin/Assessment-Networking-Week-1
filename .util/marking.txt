@@ -2,14 +2,14 @@
 platform linux -- Python 3.12.12, pytest-9.0.2, pluggy-1.6.0
 rootdir: /home/runner/work/Assessment-Networking-Week-1/Assessment-Networking-Week-1
 plugins: requests-mock-1.12.1
-collected 91 items
+collected 90 items
 
 test_postcode_cache.py .............                                     [ 14%]
-test_postcode_cli.py .............F..................                    [ 49%]
+test_postcode_cli.py ...............................                     [ 48%]
 test_postcode_functions.py ............................................. [ 98%]
 .                                                                        [100%]
 
-========================= 1 failed, 90 passed in 5.33s =========================
+============================== 90 passed in 5.53s ==============================
 ************* Module postcode_cli
 postcode_cli.py:19:29: W0621: Redefining name 'postcode' from outer scope (line 40) (redefined-outer-name)
 
