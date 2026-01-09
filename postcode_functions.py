@@ -1,8 +1,9 @@
 """Functions that interact with the Postcode API."""
 
-import requests as req
 import os
 import json
+import requests as req
+
 
 CACHE_FILE = "./postcode_cache.json"
 
@@ -46,7 +47,7 @@ def validate_postcode(postcode: str) -> bool:
     if isinstance(postcode, str) is False:
         raise TypeError("Function expects a string.")
 
-    response = req.get(get_validate_url(postcode))
+    response = req.get(get_validate_url(postcode), timeout=10)
     if response.status_code != 200:
         raise req.RequestException("Unable to access API.")
 
@@ -61,7 +62,7 @@ def get_postcode_for_location(lat: float, long: float) -> str:
     if isinstance(lat, float) is False or isinstance(long, float) is False:
         raise TypeError("Function expects two floats.")
 
-    response = req.get(get_location_url(long, lat))
+    response = req.get(get_location_url(long, lat), timeout=10)
 
     if response.status_code != 200:
         raise req.RequestException("Unable to access API.")
@@ -80,15 +81,15 @@ def get_postcode_completions(postcode_start: str) -> list[str]:
     if isinstance(postcode_start, str) is False:
         raise TypeError("Function expects a string.")
 
-    response = req.get(get_collections_url(postcode_start))
+    response = req.get(get_collections_url(postcode_start), timeout=10)
     if response.status_code != 200:
         raise req.RequestException("Unable to access API.")
 
-    json = response.json()
-    if json["result"] is None:
+    response_json = response.json()
+    if response_json["result"] is None:
         raise ValueError("No relevant postcode found.")
 
-    return json["result"]
+    return response_json["result"]
 
 
 def get_postcodes_details(postcodes: list[str]) -> dict:
@@ -98,19 +99,20 @@ def get_postcodes_details(postcodes: list[str]) -> dict:
     '''
     if isinstance(postcodes, list) is False:
         raise TypeError("Function expects a list of strings.")
-    if any([isinstance(postcode, str) is False for postcode in postcodes]):
+    if any(isinstance(postcode, str) is False for postcode in postcodes):
         raise TypeError("Function expects a list of strings.")
 
     request_json = {
         "postcodes": postcodes
     }
-    response = req.post(get_details_url(postcodes), json=request_json)
+    response = req.post(get_details_url(postcodes),
+                        json=request_json, timeout=10)
 
     if response.status_code != 200:
         raise req.RequestException("Unable to access API.")
 
-    json = response.json()
-    results = json["result"]
+    response_json = response.json()
+    results = response_json["result"]
 
     if results is None:
         raise ValueError("No relevant postcode found.")
