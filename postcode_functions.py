@@ -34,11 +34,15 @@ def get_collections_url(postcode_start: str):
     return f"https://api.postcodes.io/postcodes/{postcode_start}/autocomplete"
 
 
-def get_details_url(postcodes: list[str]):
+def get_details_url():
+    '''gives the url for getting the postcode details from a bulk request'''
     return "https://api.postcodes.io/postcodes"
 
 
 def validate_postcode(postcode: str) -> bool:
+    '''
+    returns whether a postcode is a valid postcode or not
+    '''
     if isinstance(postcode, str) is False:
         raise TypeError("Function expects a string.")
 
@@ -50,6 +54,10 @@ def validate_postcode(postcode: str) -> bool:
 
 
 def get_postcode_for_location(lat: float, long: float) -> str:
+    '''
+    uses a location given by their longitude and latitude
+    and returns the corresponding postcode
+    '''
     if isinstance(lat, float) is False or isinstance(long, float) is False:
         raise TypeError("Function expects two floats.")
 
@@ -66,6 +74,9 @@ def get_postcode_for_location(lat: float, long: float) -> str:
 
 
 def get_postcode_completions(postcode_start: str) -> list[str]:
+    '''
+    gets the postcodes that start with a certain value from the API
+    '''
     if isinstance(postcode_start, str) is False:
         raise TypeError("Function expects a string.")
 
@@ -81,6 +92,10 @@ def get_postcode_completions(postcode_start: str) -> list[str]:
 
 
 def get_postcodes_details(postcodes: list[str]) -> dict:
+    '''
+    given a list of postcodes, this does a bulk api call, and returns
+    the API data for each of them
+    '''
     if isinstance(postcodes, list) is False:
         raise TypeError("Function expects a list of strings.")
     if any([isinstance(postcode, str) is False for postcode in postcodes]):
