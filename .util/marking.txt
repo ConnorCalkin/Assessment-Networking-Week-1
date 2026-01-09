@@ -4,22 +4,30 @@ rootdir: /home/runner/work/Assessment-Networking-Week-1/Assessment-Networking-We
 plugins: requests-mock-1.12.1
 collected 91 items
 
-test_postcode_cache.py FFFFFFFFFFFFF                                     [ 14%]
-test_postcode_cli.py .............F..................                    [ 49%]
+test_postcode_cache.py .............                                     [ 14%]
+test_postcode_cli.py ....FFFFFFFFFFF.FFFFFFFFF.FFFF.F                    [ 49%]
 test_postcode_functions.py ..........................................FFF [ 98%]
 F                                                                        [100%]
 
-======================== 18 failed, 73 passed in 5.55s =========================
+======================== 29 failed, 62 passed in 5.32s =========================
 ************* Module postcode_cli
 postcode_cli.py:19:29: W0621: Redefining name 'postcode' from outer scope (line 40) (redefined-outer-name)
 ************* Module postcode_functions
-postcode_functions.py:14:4: W2301: Unnecessary ellipsis constant (unnecessary-ellipsis)
-postcode_functions.py:20:4: W2301: Unnecessary ellipsis constant (unnecessary-ellipsis)
-postcode_functions.py:17:15: W0613: Unused argument 'cache' (unused-argument)
-postcode_functions.py:108:24: E1121: Too many positional arguments for function call (too-many-function-args)
+postcode_functions.py:14:13: W1514: Using open without explicitly specifying an encoding (unspecified-encoding)
+postcode_functions.py:25:9: W1514: Using open without explicitly specifying an encoding (unspecified-encoding)
+postcode_functions.py:29:0: C0116: Missing function or method docstring (missing-function-docstring)
+postcode_functions.py:37:0: C0116: Missing function or method docstring (missing-function-docstring)
+postcode_functions.py:65:0: C0116: Missing function or method docstring (missing-function-docstring)
+postcode_functions.py:65:0: C0103: Function name "validate_postcode_from_API" doesn't conform to snake_case naming style (invalid-name)
+postcode_functions.py:73:0: C0116: Missing function or method docstring (missing-function-docstring)
+postcode_functions.py:75:4: R1705: Unnecessary "else" after "return", remove the "else" and de-indent the code inside it (no-else-return)
+postcode_functions.py:116:0: C0116: Missing function or method docstring (missing-function-docstring)
+postcode_functions.py:116:0: C0103: Function name "get_postcode_completions_from_API" doesn't conform to snake_case naming style (invalid-name)
+postcode_functions.py:128:0: C0116: Missing function or method docstring (missing-function-docstring)
+postcode_functions.py:133:8: W0707: Consider explicitly re-raising using 'except KeyError as exc' and 'raise RuntimeError(f'No collections value for {postcode_start} in cache') from exc' (raise-missing-from)
+postcode_functions.py:165:24: E1121: Too many positional arguments for function call (too-many-function-args)
 postcode_functions.py:3:0: W0611: Unused import os (unused-import)
-postcode_functions.py:4:0: W0611: Unused import json (unused-import)
 
 ------------------------------------------------------------------
-Your code has been rated at 8.69/10 (previous run: 8.69/10, +0.00)
+Your code has been rated at 8.53/10 (previous run: 8.53/10, +0.00)
 
