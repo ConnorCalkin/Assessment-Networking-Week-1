@@ -1,7 +1,7 @@
 """A CLI application for interacting with the Postcode API."""
 
 from argparse import ArgumentParser
-from postcode_functions import validate_postcode
+from postcode_functions import validate_postcode, get_postcode_completions
 
 
 def get_args():
@@ -19,6 +19,15 @@ def output_validate_postcode(postcode: str) -> None:
         print(f'{postcode} is not a valid postcode.')
 
 
+def output_completed_postcodes(postcode_start: str) -> None:
+    try:
+        completions = get_postcode_completions(postcode_start)
+        for completion in completions:
+            print(completion)
+    except ValueError:
+        print(f'No matches for {postcode_start}.')
+
+
 if __name__ == "__main__":
     args = get_args()
     postcode = args.postcode
@@ -26,4 +35,4 @@ if __name__ == "__main__":
     if args.mode == "validate":
         output_validate_postcode(postcode)
     if args.mode == "complete":
-        pass
+        output_completed_postcodes(postcode)
