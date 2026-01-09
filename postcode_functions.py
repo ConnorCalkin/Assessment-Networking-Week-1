@@ -14,7 +14,6 @@ def load_cache() -> dict:
             data = json.load(f)
         return data
     except FileNotFoundError:
-        print("AAA")
         return {}
 
 
@@ -170,7 +169,7 @@ def get_postcodes_details(postcodes: list[str]) -> dict:
     request_json = {
         "postcodes": postcodes
     }
-    response = req.post(get_details_url(postcodes),
+    response = req.post(get_details_url(),
                         json=request_json, timeout=10)
 
     if response.status_code != 200:
